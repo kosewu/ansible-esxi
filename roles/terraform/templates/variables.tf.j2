@@ -1,0 +1,68 @@
+# Configure the VMware vSphere Provider
+# You can use vcenter login params or simply host esxi login params
+provider "vsphere" {
+  # If you use a domain set your login like this "MyDomain\\MyUser"
+  user           = "${var.vcenter_user}"
+  password       = "${var.vcenter_password}"
+  vsphere_server = "${var.vsphere_server}"
+
+  # if you have a self-signed cert
+  allow_unverified_ssl = true
+}
+
+#### TEMPLATES
+variable "vcenter_user" {}
+variable "vcenter_password" {}
+variable "vsphere_server" {}
+
+
+# You must add template in vsphere before use it
+variable "linux_vm_template" {
+  default = "{{ vsphere_linux_vapp_template_name }}"
+}
+
+variable "disk_datastore" {
+  default = "{{ vsphere_disk_datastore }}"
+}
+
+variable "disk_cluster_datastore" {
+  default = "{{ vsphere_disk_cluster_datastore }}"
+}
+    
+#### DC AND CLUSTER
+# Set vpshere datacenter
+variable "vsphere_datacenter" {
+  default = "{{ vsphere_vcenter_datacenter }}"
+}
+
+# Set cluster where you want deploy your vm
+variable "vsphere_datacenter_cluster" {
+  default = "{{ vsphere_vcenter_cluster }}"
+}
+    
+
+# Set host where you want deploy your vm
+variable "esxi_hosts" {
+  default = "{{ esxi_hosts }}"
+}
+
+variable "resource_pool_designator" {
+  description = "The name or path for the resource pool in which to create the resources"
+  default = ""
+}
+    
+#### GLOBAL NETWORK PARAMS
+# Virtual switch used
+variable "vswitch" {
+  default = "vSwitch0"
+}
+
+
+variable "dns_servers" {
+  default = [
+{% for dns_server in vsphere_dns_servers %}
+    "{{ dns_server }}",
+{% endfor %}
+  ]
+}
+

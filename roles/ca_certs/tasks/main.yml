@@ -1,0 +1,21 @@
+
+- name: Install packages
+  yum: name={{ item }} state=latest
+  with_items:
+    - libselinux-python
+    - ca-certificates
+
+- name: Copy certificates
+  copy: src=certs/myCA.pem dest=/etc/pki/ca-trust/source/anchors/
+  #with_items: cert_list.stdout_lines
+
+- name: Enable update-ca-trust
+  command: /usr/bin/update-ca-trust enable
+
+- name: Extract certificates
+  command: /usr/bin/update-ca-trust extract
+  
+- name: Copy CA Key
+  copy: src=certs/myCA.key dest=/root/
+- name: Copy CA PEM
+  copy: src=certs/myCA.pem dest=/root/

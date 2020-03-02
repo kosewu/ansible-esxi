@@ -1,0 +1,30 @@
+certs:
+ - jenkins.gabby.local.crt
+ - jenkins.gabby.local.key
+
+nginx_vhosts:
+  - listen: "80"
+    server_name: "jenkins.gabby.local"
+    #server_name_redirect: "jenkins.gabby.local"
+    return: "301 https://jenkins.gabby.local$request_uri"
+    filename: "jenkins.gabby.local.80.conf"
+    
+  - listen: "443 ssl http2"
+    server_name: "jenkins.gabby.local"
+    state: "present"
+    template: "{{ nginx_vhost_template }}"
+    filename: "jenkins.gabby.local.conf"
+    extra_parameters: |
+      location / {
+          proxy_set_header HOST $host;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+     
+          proxy_pass http://127.0.0.1:8080;
+      }
+
+      ssl_certificate     /DATA/ssl/jenkins.gabby.local.crt;
+      ssl_certificate_key /DATA/ssl/jenkins.gabby.local.key;
+      ssl_protocols       TLSv1.1 TLSv1.2;
+      ssl_ciphers         HIGH:!aNULL:!MD5;

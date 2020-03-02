@@ -1,0 +1,27 @@
+install_lb: true
+install_app: false
+
+network_interface_name: "{{ ansible_ens160.ipv4.address }}"
+
+yumrepo_repos:
+  kubernetes:
+    name: kubernetes repo
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    enabled: 1
+    gpgcheck: 1
+    repo_gpgcheck: 1
+    gpgkey: 'https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg'
+
+selinux_state: permissive
+
+
+resolv_nameservers:
+  - 10.10.10.11
+  - 8.8.8.8
+
+resolv_domain: gabby.local
+resolv_search:
+  - gabby.local
+
+java_packages:
+  - java-1.8.0-openjdk

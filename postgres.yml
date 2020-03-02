@@ -1,0 +1,37 @@
+---
+- hosts: postgresql
+  pre_tasks:
+    - name: enable firewalld service
+      service:
+        name: firewalld
+        enabled: true
+        state: started
+    - name: enable firewalld port
+      firewalld:
+        port: "{{ postgres_http_port }}/tcp"
+        state: enabled
+        immediate: yes
+        permanent: yes
+    - name: create nfsshare directory
+      file:
+        state: directory
+        path: /DATA
+        mode: 0755
+    - name: Create a new primary partition with a size of 200GiB
+      parted:
+        device: /dev/sdb
+        number: 1
+        state: present
+        part_end: 199GiB
+    - name: Create a ext2 filesystem on /dev/sdb1
+      filesystem:
+        fstype: xfs
+        dev: /dev/sdb1
+    - name: Mount and bind a volume
+      mount:
+        path: /DATA
+        src: /dev/sdb1
+        state: mounted
+        fstype: xfs
+  roles:
+    - postgresql-old

@@ -1,0 +1,136 @@
+
+- name: create ssh key directory
+  file:
+    path: "/root/.ssh"
+    state: directory
+    owner: root
+    group: root
+        
+- name: ssh private key
+  copy: 
+    src: "files/master/ssh-keys/id_rsa" 
+    dest: "/root/.ssh/id_rsa"
+    mode: 0400
+
+- name: ssh public key
+  copy: 
+    src: "files/master/ssh-keys/id_rsa.pub" 
+    dest: "/root/.ssh/id_rsa.pub"
+    mode: 0400
+    
+- name: installing yum apps
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - openshift-ansible
+ 
+- name: add openshift-ansible hosts
+  copy: >
+    src=files/inventory/hosts
+    dest=/etc/ansible/hosts
+    owner=root
+    group=root
+    mode=0600
+ 
+- name: clone a openshift repository
+  git: >
+    repo=https://github.com/openshift/openshift-ansible
+    dest=/opt/openshift-ansible
+    version={{ openshift_version }}
+    
+- name: add openshift-ansible hosts
+  copy: >
+    src=files/inventory/hosts
+    dest=/opt/openshift-ansible/inventory/hosts
+    owner=root
+    group=root
+    mode=0600
+
+#https://github.com/heketi/heketi/releases/download/v7.0.0/heketi-client-v7.0.0.linux.amd64.tar.gz
+
+- name: create heketi group
+  group: name={{ heketi_group }}  state=present
+
+- name: create heketi user
+  user:
+    name: "{{ heketi_user }}"
+    group: "{{ heketi_group }}"
+    createhome: no
+    shell: /sbin/nologin
+    comment: "heketi User"
+    state: present
+
+- name: mkdir for general heketi cases
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ heketi_user }}"
+    group: "{{ heketi_group }}"
+    mode: "u=rwx,g=rx,o="
+  with_items:
+    - "/etc/heketi"
+    - "/var/lib/heketi"
+    - "/var/log/heketi"
+    
+        
+- name: set permissions, owner and group
+  file:
+    path: "/var/lib/heketi"
+    state: directory
+    owner: heketi
+    group: heketi
+    mode: "go-w"
+    recurse: yes
+
+#https://github.com/heketi/heketi/releases/download/v8.0.0/heketi-v8.0.0.linux.amd64.tar.gz
+    
+- name: set heketi download url
+  set_fact:
+    heketi_tarball_url: "https://github.com/heketi/heketi/releases/download/{{ heketi_version }}/heketi-{{ heketi_version }}.linux.amd64.tar.gz"
+
+- name: download and untar Heketi tarball
+  unarchive:
+    src: "{{ heketi_tarball_url }}"
+    dest: "/tmp"
+    copy: no
+
+  
+  
+- name: copy heketi files
+  copy: src=/tmp/heketi/heketi dest=/usr/local/bin/heketi remote_src=yes mode=+x
+  
+- name: copy heketi-client files
+  copy: src=/tmp/heketi/heketi-cli dest=/usr/local/bin/heketi-cli remote_src=yes mode=+x   
+    
+- name: install ansible and Heketi utilities
+  yum: name={{ item }} state=present
+  #enablerepo: epel
+  with_items:
+    #- heketi-client
+    #- heketi-templates
+    #- heketi
+    #- python-heketi
+    - python2-passlib
+    - java-1.8.0-openjdk-headless
+
+- name: copy private key
+  copy: src=heketi/insecure_private_key owner=heketi group=heketi dest=/etc/heketi/insecure_private_key force=yes mode=600
+
+- name: copy heketi configuration
+  copy: src=heketi/heketi.json owner=root group=root dest=/etc/heketi/heketi.json force=yes mode=644
+
+- name: copy topology configuration
+  copy: src=heketi/topology.json owner=root group=root dest=/etc/heketi/topology.json force=yes mode=644
+
+- name: copy startup script to server
+  copy: src=heketi/heketi.service  owner=root group=root dest=/etc/systemd/system/heketi.service force=yes 
+  notify:
+    - Reload systemd
+    - Restart heketi  
+  
+- name: start heketi service 
+  service: name=heketi state=started enabled=yes
+    
+#heketi-cli --server http://10.10.10.70:8080  topology load  --json=/etc/heketi/topology.json
+    

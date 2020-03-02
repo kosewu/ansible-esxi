@@ -1,0 +1,12 @@
+- name: remove the line
+  lineinfile: dest=/var/named/10.10.10.in-addr.arpa
+              regexp='^(.*)40               IN  PTR  *.kube.gabby.local.gabby.local.(.*)$'
+              line= ''
+              backrefs= yes
+              
+- name: Start BIND service
+  service:
+    name: "{{ bind_service }}"
+    state: started
+    enabled: yes
+  tags: bind

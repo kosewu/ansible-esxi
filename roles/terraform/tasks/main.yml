@@ -1,0 +1,66 @@
+# create a directory if it doesn't exist
+- file:
+    path: "{{ terraform_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Generating Terraform Network File
+  template:
+    src: templates/network.tf.j2
+    dest: "{{ terraform_dir }}/network.tf"
+        
+- name: Generating Terraform Variables
+  template:
+    src: templates/variables.tf.j2
+    dest: "{{ terraform_dir }}/variables.tf"
+
+- name: Generating Terraform Data Retrieve
+  template:
+    src: templates/data-retrieve.tf.j2
+    dest: "{{ terraform_dir }}/data-retrieve.tf"
+    
+    
+- name: Generating Secret Terraform Variables
+  template:
+    src: templates/terraform.tfvars.j2
+    dest: "{{ terraform_dir }}/terraform.tfvars"
+    
+- name: Generating Terraform VM Definitions
+  template:
+    src: templates/vm_resources.tf.j2
+    dest: "{{ terraform_dir }}/vm_resources.tf"
+    
+- name: Capturing Terraform Init State
+  command: "terraform init -get=true -input=false"
+  register: _terraform_init_state
+  changed_when: false
+  args:
+    chdir: "{{ terraform_dir }}"
+  tags:
+    - terraform_init
+
+- name: Running Terraform Plan
+  command: "terraform plan -out=tfplan -input=false -detailed-exitcode"
+  register: _terraform_plan
+  changed_when: false
+  args:
+    chdir: "{{ terraform_dir }}"
+  tags:
+    - terraform_apply
+    - terraform_plan
+  failed_when: _terraform_plan['rc'] > 2
+
+- name: Displaying Terraform Plan
+  debug: var=_terraform_plan
+  tags:
+    - terraform_apply
+    - terraform_plan
+    
+- name: Applying Terraform Plan
+  command: "terraform apply -input=false -auto-approve=true tfplan"
+  register: _terraform_apply
+  changed_when: false
+  args:
+    chdir: "{{ terraform_dir }}"
+  tags:
+    - terraform_apply

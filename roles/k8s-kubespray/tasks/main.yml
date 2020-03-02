@@ -1,0 +1,51 @@
+---
+- name: "create k8s repo"
+  copy:
+   src: "{{ role_path }}/files/k8.repo" 
+   dest: /etc/yum.repos.d/k8s.repo
+
+- name:  yum update all
+  shell: yum update -y
+  args:
+   executable: /bin/bash
+
+- name: yum install packages for k8s
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - python36 
+    - python36-pip
+    - rhel-system-roles
+  ignore_errors: True
+  
+
+
+- name: execute the role and catch errors
+  block:
+  - include_role:
+     name: rhel-system-roles.selinux
+  rescue:
+  # Fail if failed for a different reason than selinux_reboot_required.
+  - name: handle errors
+    fail:
+     msg: "role failed"
+    when: not selinux_reboot_required
+
+  - name: restart managed host
+    reboot:
+
+  - name: reapply the role
+    include_role:
+      name: rhel-system-roles.selinux
+
+- name: disable firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: false
+#- include_tasks: mounts.yml
+#- include_tasks: docker-ce.yml
+#  when: docker_storage_setup
+
+   

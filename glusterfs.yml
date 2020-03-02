@@ -1,0 +1,10 @@
+---
+- hosts: gluster
+  roles:
+    #- firewall
+    - glusterfs
+    - glusterfsext
+
+    
+
+

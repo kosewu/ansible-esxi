@@ -1,0 +1,10 @@
+---
+- name: makdir /DATA/ssl
+  file:
+    path: /DATA/ssl
+    state: directory
+- name: copy certs
+  copy:
+    src: "files/{{ item }}"
+    dest: "/DATA/ssl/{{ item }}"
+  loop: "{{ certs }}"

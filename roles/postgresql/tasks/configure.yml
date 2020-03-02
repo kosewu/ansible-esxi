@@ -1,0 +1,50 @@
+---
+- name: Configure global settings.
+  lineinfile:
+    dest: "{{ postgresql_config_path }}/postgresql.conf"
+    regexp: "^#?{{ item.option }}.+$"
+    line: "{{ item.option }} = '{{ item.value }}'"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ postgresql_global_config_options }}"
+  notify: restart postgresql
+
+- name: Configure host based authentication (if entries are configured).
+  template:
+    src: "pg_hba.conf.j2"
+    dest: "{{ postgresql_config_path }}/pg_hba.conf"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+    mode: 0600
+  notify: restart postgresql
+  when: postgresql_hba_entries
+
+- name: Ensure PostgreSQL unix socket dirs exist.
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+    mode: 02775
+  with_items: "{{ postgresql_unix_socket_directories }}"
+
+- name: PostgreSQL | Ensure the systemd directory for PostgreSQL exists | RedHat
+  file:
+    name: "/etc/systemd/system/postgresql-{{ postgresql_version }}.service.d"
+    state: directory
+    mode: 0755
+  when: ansible_os_family == "RedHat"
+  notify: restart postgresql
+
+- name: PostgreSQL | Use the conf directory when starting the Postgres service | RedHat
+  template:
+    src: etc_systemd_system_postgresql.service.d_custom.conf.j2
+    dest: "/etc/systemd/system/postgresql-{{ postgresql_version }}.service.d/custom.conf"
+  when: ansible_os_family == "RedHat"
+  register: postgresql_systemd_custom_conf
+  
+- name: PostgreSQL | Reload all conf files
+  service:
+    name: "{{ postgresql_service_name }}"
+    state: reloaded
+  when: postgresql_systemd_custom_conf.changed
+

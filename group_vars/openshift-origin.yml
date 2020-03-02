@@ -1,0 +1,24 @@
+---
+resolv_nameservers:
+  - "{{ ansible_default_ipv4.address }}"
+  - "10.10.10.11"
+  - "8.8.8.8"
+resolv_search:
+  - gabby.local 
+  - cluster.local
+
+#resolv_nameservers:
+#  - "10.10.10.11"
+#  - "8.8.8.8"
+##resolv_search:
+#  - gabby.local 
+#  - cluster.local
+  
+#  search cluster.local gabby.local
+#nameserver 10.10.10.81
+  
+
+  
+docker_storage_setup: true
+
+openshift_version: release-3.11

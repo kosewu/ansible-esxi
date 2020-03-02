@@ -1,0 +1,60 @@
+---
+- hosts: jenkins
+  vars:
+    jenkins_http_port: 8080
+    jenkins_home: /DATA/jenkins
+    create_partition: false
+  roles:
+    - java
+    - jenkins
+    - ssl-certs
+    - nginx
+    - helm
+  pre_tasks:
+    - name: enable firewalld service
+      service:
+        name: firewalld
+        enabled: true
+        state: started
+    - name: enable firewalld port
+      firewalld:
+        port: "{{ jenkins_http_port }}/tcp"
+        state: enabled
+        immediate: yes
+        permanent: yes
+    - name: enable firewalld nginx
+      firewalld:
+        service: "{{ item }}"
+        state: enabled
+        immediate: yes
+        permanent: yes
+      loop:
+        - http
+        - https
+    - block:
+        - name: lets do partition
+          parted:
+            device: /dev/sdb
+            number: 1
+            state: present
+            part_end: 199GiB
+            
+        - name: format partition
+          filesystem:
+            fstype: xfs
+            dev: /dev/sdb1
+            
+        - name: Create DATA directory
+          file:
+            path: /DATA
+            state: directory
+            
+        - name: Mount DATA
+          mount:
+            path: /DATA
+            src: /dev/sdb1
+            fstype: xfs
+            state: mounted
+            
+      when: create_partition
+#chcon -v --type=httpd_sys_content_t /DATA/ssl/*

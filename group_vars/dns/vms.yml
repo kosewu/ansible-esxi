@@ -1,0 +1,244 @@
+vsphere_dns_servers:
+  - "10.10.10.11"
+  - "8.8.8.8"
+
+esxi_hosts: 10.10.10.3
+ 
+vsphere_vcenter_cluster: gabby-cluster 
+vsphere_linux_vapp_template_name: centos-7-template-esxi
+vsphere_vcenter_datacenter: gabby.local
+vsphere_disk_datastore: datastore
+terraform_dir: /root/terraform
+
+vsphere_disk_cluster_datastore: "DatastoreCluster"
+vsphere_vcenter: "10.10.10.15"
+vcenter_user: "administrator@gabby.local"
+vcenter_password: "P@ssw0rd"
+vcenter_datacenter: "gabby.local"
+vsphere_server: "10.10.10.15"
+
+
+terraform_vms:
+  - hostname: plex
+    ram: 4024
+    vcpu: 4
+    disks:
+     - 100
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.101"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"
+
+  - hostname: gogs
+    ram: 1024
+    vcpu: 2
+    disks:
+     - 20
+     - 300
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.24"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"
+
+  - hostname: postgresql
+    ram: 2048
+    vcpu: 2
+    disks:
+     - 20
+     - 200
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.27"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"
+      
+  - hostname: jenkins
+    ram: 3096
+    vcpu: 2
+    disks:
+     - 20
+     - 200
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.25"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"
+            
+  - hostname: ocp-master1
+    ram: 20000
+    vcpu: 6
+    disks:
+     - 20
+     - 100
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.81"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"
+      
+  - hostname: ocp-infra1
+    ram: 4096
+    vcpu: 2
+    disks:
+     - 20
+     - 50
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.80"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"
+      
+  - hostname: ocp-node1
+    ram: 16000
+    vcpu: 6
+    disks:
+     - 20
+     - 100
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.71"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"
+  - hostname: ocp-node2
+    ram: 16000
+    vcpu: 6
+    disks:
+     - 20
+     - 100
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.72"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"     
+      
+  - hostname: ocp-nfs
+    ram: 2096
+    vcpu: 1
+    disks:
+     - 20
+     - 200
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.55"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}" 
+      
+   ### Kubeneretes
+  - hostname: k8s-master1
+    ram: 8192
+    vcpu: 2
+    disks:
+     - 50
+     - 50
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.30"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}" 
+
+               
+  - hostname: k8s-router
+    ram: 2000
+    vcpu: 2
+    disks:
+     - 20
+     - 20
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.40"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"
+      
+  - hostname: k8s-node1
+    ram: 10000
+    vcpu: 4
+    disks:
+     - 50
+     - 150
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.32"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"       
+
+  - hostname: k8s-node2
+    ram: 10000
+    vcpu: 4
+    disks:
+     - 50
+     - 150
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.33"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"  
+
+  - hostname: k8s-node3
+    ram: 10000
+    vcpu: 4
+    disks:
+     - 50
+     - 150
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.34"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"  
+      
+            
+  - hostname: harbor
+    ram: 2048
+    vcpu: 2
+    disks:
+     - 20
+     - 200
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.23"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"   
+      
+  - hostname: airflow
+    ram: 2048
+    vcpu: 2
+    disks:
+     - 30
+    network_params:
+      label: "{{ interface_label }}"
+      ipv4_address: "10.10.10.102"
+      domain: "{{ domain }}"
+      vlan_id: "{{ vlan_id }}"
+      prefix_length: "{{ prefix_length }}"
+      gateway: "{{ gateway }}"     

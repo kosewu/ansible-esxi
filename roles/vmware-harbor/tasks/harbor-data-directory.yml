@@ -1,0 +1,30 @@
+---
+# check these dirs exist and create...
+# if you would like the information to be on a volume, create it before 
+
+    
+- name: 'create or check data path at: {{ harbor_secretkey_path }}'
+  file: 
+    path: '{{ harbor_secretkey_path }}'
+    state: directory
+    # check necessary mode , owners
+
+    
+- name: 'Create a new primary partition with a size of {{ harbor_hdd_size }} on {{ harbor_hdd_device }}'
+  parted:
+    device: "{{ harbor_hdd_device }}"
+    number: 1
+    state: present
+    part_end: "{{ harbor_hdd_size }}"
+    
+- name: Create a ext2 filesystem on /dev/sdb1
+  filesystem:
+    fstype: "{{ harbor_fstype }}"
+    dev: "{{ harbor_hdd_device }}1" 
+    
+- name: Mount up device by label
+  mount:
+    path: "{{ harbor_secretkey_path }}"
+    src: "{{ harbor_hdd_device }}1" 
+    fstype: "{{ harbor_fstype }}"
+    state: present

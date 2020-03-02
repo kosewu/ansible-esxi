@@ -1,0 +1,94 @@
+---
+- name: Install EPEL repo.
+  yum:
+    name: epel-release
+    state: present
+
+#- name:  origin.repo
+#  shell: "cd /etc/yum.repos.d && curl -O https://storage.googleapis.com/origin-ci-test/releases/openshift/origin/master/origin.repo"
+#  args:
+#   executable: /bin/bash
+- selinux:
+    policy: targeted
+    state: enforcing
+    
+- name:  yum update -y
+  shell: yum update -y 
+  args:
+   executable: /bin/bash
+   
+- name: installing yum apps
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - NetworkManager
+    - bash-completion
+    - vim
+    - tree
+    - wget
+    - git
+    - net-tools 
+    - bind-utils 
+    - python-rhsm-certificates 
+    - ansible
+    - glusterfs-client
+    - psacct
+    - yum-utils 
+    - iptables-services 
+    - bash-completion 
+    - kexec-tools 
+    - sos
+    - python-pip
+    - pyOpenSSL
+    #- openshift-ansible
+    - centos-release-openshift-origin311
+#address=/.apps.gabby.local/10.10.10.80
+#address=/openshift.gabby.local/10.10.10.81
+
+
+#- pip:
+#    name: pyopenssl
+- hostname:
+    name: "{{ inventory_hostname }}"
+        
+- name: Copy certificates
+  copy: src=certs dest=/root/
+
+- name: enable and start NetworkManager 
+  service: name=NetworkManager state=started  enabled=yes
+
+- name: shutdown
+  command: /sbin/shutdown -h now 
+  when: shutdown is defined
+   
+- include: masters.yml
+  when: openshift_origin_node_type == "master"
+
+
+- name:  disable epel repo
+  shell: "sed -i -e 's/^enabled=1/enabled=0/' /etc/yum.repos.d/epel.repo"
+  args:
+   executable: /bin/bash
+     
+- include: volume_docker_setup.yml
+  when: docker_storage_setup
+
+- name: etc hosts details
+  copy: >
+    src=files/etc/hosts
+    dest=/etc/hosts
+ 
+- name: Add ssh user keys
+  authorized_key: 
+    user: root
+    key: "{{ lookup('file', 'master/ssh-keys/id_rsa.pub') }}"
+
+- name: reboot all servers
+  reboot:
+#- include: nodes.yml  
+#  when: openshift_origin_node_type is defined
+  
+#- include: lab.yml  
+#  when: openshift_origin_node_type == "lab"
+   

@@ -1,0 +1,21 @@
+---
+- hosts: harbor
+  force_handlers: True
+  roles:
+    - vmware-harbor
+#  pre_tasks:
+#   - name: configure create vg for docker
+#     block:
+#      - name: partition /sdb
+#        command: parted --script /dev/sdb mklabel gpt mkpart primary 1MiB 100%
+#        args:
+#          creates: /dev/sdb1      
+#      #- name: Ensure Volume Group vg_docker Exist
+#      #  lvg:
+#      #   vg: "vg_docker"
+#      #   pvs: "/dev/sdb1"
+#     when: docker_storage_setup
+
+    
+
+

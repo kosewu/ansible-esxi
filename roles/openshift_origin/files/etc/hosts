@@ -1,0 +1,8 @@
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+10.10.10.81     ocp-master1.gabby.local ocp-master1 openshift-int.gabby.local openshift-int
+10.10.10.80     ocp-infra1.gabby.local ocp-infra1
+10.10.10.71     ocp-node1.gabby.local ocp-node1
+10.10.10.72     ocp-node2.gabby.local ocp-node2
+10.10.10.55     ocp-nfs.gabby.local ocp-nfs

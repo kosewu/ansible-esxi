@@ -1,0 +1,38 @@
+
+- name: Add Docker CE repository
+  shell: yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+  args:
+    creates: /etc/yum.repos.d/docker-ce.repo 
+
+
+- name: yum install packages for k8s
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - yum-utils 
+    - device-mapper-persistent-
+    - data 
+    - lvm2
+  ignore_errors: True
+  
+
+    
+    
+
+- name: yum install docker-ce
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - docker-ce
+
+- name: setup docker-storage
+  import_tasks: volume_docker_setup.yml
+  when: docker_storage_setup
+    
+- name: enable and start docker 
+  service: 
+   name: docker 
+   state: started  
+   enabled: yes  

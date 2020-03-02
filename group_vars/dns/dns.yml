@@ -1,0 +1,138 @@
+bind_listen_ipv4:
+  - "127.0.0.1"
+  - "10.10.10.11"
+
+bind_allow_query:
+  - "localhost"
+  - "10.10.10.0/24"
+
+  
+dns_server: true  
+
+bind_recursion: true
+
+bind_zone_master_server_ip: 10.10.10.11
+my_ip4_address: 10.10.10.11
+acls:
+  - name: acl1
+    match_list:
+      - 10.10.10.0/24
+      - "10.10.10.11"
+        
+bind_zone_name_servers:
+  - masterdns
+
+
+
+#bind_zone_name: gabby.local
+bind_zone_networks:
+  - "10.10.10"
+
+bind_zone_domains:
+  - name: kube.local
+    networks:
+    - "10.10.11"
+    hosts:
+      - name: '@'
+        ip: 10.10.10.11
+      - name: '*.apps.kube.local 300'
+        ip: 10.10.10.40
+        donotadd_reverse: true
+    ### kube
+      - name: '*'
+        ip: 10.10.10.40
+        donotadd_reverse: true
+
+  - name: gabby.local
+    networks:
+    - "10.10.10"
+    hosts:
+      - name: '@'
+        ip: 10.10.10.11
+      - name: masterdns
+        ip: 10.10.10.11
+      - name: vcenter
+        ip: 10.10.10.15
+      - name: vcenter6
+        ip: 10.10.10.6
+      - name: ansible
+        ip: 10.10.10.21
+      - name: awx-ansible
+        ip: 10.10.10.22
+      - name: harbor
+        ip: 10.10.10.23 
+      - name: gogs
+        ip: 10.10.10.24
+      - name: postgresql
+        ip: 10.10.10.27
+      - name: jenkins
+        ip: 10.10.10.25
+      - name: k8s-master1
+        ip: 10.10.10.30
+      - name: k8s-master2
+        ip: 10.10.10.31
+      - name: k8s-router
+        ip: 10.10.10.40
+      - name: k8s-node1
+        ip: 10.10.10.32
+      - name: k8s-node2
+        ip: 10.10.10.33
+      - name: k8s-node3
+        ip: 10.10.10.34
+      - name: ocp-nfs
+        ip: 10.10.10.55
+      - name: plex
+        ip: 10.10.10.101 
+      - name: airflow
+        ip: 10.10.10.102          
+    ### Openshift
+      - name: '*.apps.gabby.local 300'
+        ip: 10.10.10.80
+        donotadd_reverse: true
+      - name: '*.kube.gabby.local 300'
+        ip: 10.10.10.40
+        donotadd_reverse: true
+    ### Openshift
+      - name: '*'
+        ip: 10.10.10.80
+        donotadd_reverse: true
+               
+      - name: ocp-infra1
+        ip: 10.10.10.80
+        
+      - name: openshift
+        ip: 10.10.10.81
+    
+      - name: openshift-int
+        ip: 10.10.10.81
+            
+      - name: ocp-master1
+        ip: 10.10.10.81  
+        
+        
+      - name: ocp-node1
+        ip: 10.10.10.71
+        
+      - name: ocp-node2
+        ip: 10.10.10.72
+        
+      - name: ocp-node3
+        ip: 10.10.10.73
+       
+      - name: ocp-glusterfs1
+        ip: 10.10.10.76
+      - name: ocp-glusterfs2
+        ip: 10.10.10.77 
+      - name: ocp-glusterfs3
+        ip: 10.10.10.78 
+
+        
+    
+
+gateway: 10.10.10.1
+vlan_id: 1
+domain: "gabby.local"
+prefix_length: 24
+interface_label: "VM Network"
+
+

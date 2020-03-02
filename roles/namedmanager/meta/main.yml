@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: "Ousmane Sanogo"
+  company: VEONE TECHONOLOGIES
+  license: BSD
+  min_ansible_version: 1.9
+  platforms:
+   - name: EL
+     versions:
+      - 7
+   - name: Fedora
+     versions:
+      - 18
+  galaxy_tags:
+   - system
+   - networking
+   - dns
+dependencies: []

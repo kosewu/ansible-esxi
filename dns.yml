@@ -1,0 +1,11 @@
+---
+- hosts: dns
+  force_handlers: True
+  roles:
+    - bertvv.bind
+    #- post_tasks
+    - terraform
+
+    
+
+

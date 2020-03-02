@@ -1,0 +1,1 @@
+ansible-playbook  -i /etc/ansible/hosts /etc/ansible/site.yml --user=root  --extra-vars "ansible_sudo_pass=P@ssw0rd"

@@ -1,0 +1,48 @@
+
+
+#- name: unmount docker stuff
+#  mount:
+#    path: /var/lib/docker/containers
+#    state: absent
+
+    
+#- name:  remove /var/lib/docker/
+#  shell: rm -rf /var/lib/docker
+#  args:
+#   executable: /bin/bash
+
+
+- name: Install Docker
+  yum: 
+   name: docker
+   state: present
+
+
+- name: "Create Docker Storage Daemon"
+  copy:
+    src: docker/docker-storage-setup
+    dest: /etc/sysconfig/docker-storage-setup 
+
+    
+- name:  Run Docker Storage Setup
+  command: /usr/bin/docker-storage-setup
+  ignore_errors: yes
+
+#- name: "Create Docker Storage "
+#  copy:
+#    src: docker/docker-storage
+#    dest: /etc/sysconfig/docker-storage 
+    
+#- name:  Configuring Docker Storage
+#  shell: "sed -i 's/selinux-enabled/selinux-enabled\ --insecure-registry\ 172.50.0.0\/16/g' /etc/sysconfig/docker"
+#  args:
+#   executable: /bin/bash
+#  #when: docker_storage_setup == "true"
+  
+
+   
+- name: Enable and Start docker 
+  service: 
+   name: docker 
+   state: started  
+   enabled: yes 

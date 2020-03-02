@@ -1,0 +1,4 @@
+kubectl create namespace traefik
+
+
+kubectl create secret tls traefik-ui-tls-cert --key ./tls.key --cert ./tls.crt -n traefik

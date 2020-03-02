@@ -1,0 +1,30 @@
+---
+driver:
+  name: docker
+verifier:
+  name: goss
+  lint:
+    name: yamllint
+platforms:
+  - name: centos7
+    image: centos:7
+  - name: fedora29
+    image: fedora:29
+  - name: ubuntu1804
+    image: ubuntu:18.04
+  - name: debian8
+    image: debian:8
+  - name: debian9
+    image: debian:9.9
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      remote_tmp: /tmp
+      stdout_callback: yaml
+  playbooks:
+    converge: playbook.yml
+  lint:
+    name: ansible-lint
+scenario:
+  name: default

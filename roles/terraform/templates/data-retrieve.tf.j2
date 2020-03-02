@@ -1,0 +1,43 @@
+#### GLOBAL CONFIG DC AND HOST
+# Define datacenter
+data "vsphere_datacenter" "dc" {
+  name = "${var.vsphere_datacenter}"
+}
+
+# Exctrat data port vlan creation
+data "vsphere_host" "host" {
+  name          = "${var.esxi_hosts}"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}
+
+data "vsphere_resource_pool" "pool" {
+  # If you haven't resource pool, put "Resources" after cluster name
+  name          = "Resources"
+  #name          = "${var.vsphere_datacenter_cluster}/Resources"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}
+
+# Retrieve datastore information on vsphere
+data "vsphere_datastore" "datastore" {
+  name          = "${var.disk_datastore}"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}
+ 
+# Retrieve cluster datastore information on vsphere
+#data "vsphere_datastore_cluster" "datastore_cluster" {
+#  name          = "${var.disk_cluster_datastore}"
+#  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+#}
+
+# Retrieve network information on vsphere
+data "vsphere_network" "network" {
+  name          = "VM Network" #"${var.kube_node1_network_params["label"]}"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+  #depends_on    = ["vsphere_host_port_group.network_port"]
+}
+
+# Retrieve template information on vsphere
+data "vsphere_virtual_machine" "template" {
+  name          = "${var.linux_vm_template}"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}

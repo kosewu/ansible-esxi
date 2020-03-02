@@ -1,0 +1,60 @@
+---
+# tasks file for mkgin.vmware-harbor
+
+
+# install with yum if...
+
+- name: install deps
+  yum: 
+    name: "{{ item }}" 
+    state: latest 
+    update_cache: yes
+  loop:
+    - git
+    - python-pycurl
+    - docker-python
+    - yum-utils
+    
+- name: add docker group
+  action: group name=docker state=present
+  
+  
+- name: add docker repo
+  action: yum_repository name=docker description='Docker official repo'
+    baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
+    gpgkey=https://yum.dockerproject.org/gpg
+    gpgcheck=yes
+    enabled=yes
+    state=present
+
+- name: add docker repo
+  command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+
+
+
+- name: install docker and docker compose
+  yum:  
+   name: "{{ item }}" 
+   state: latest 
+   update_cache: yes
+  loop:
+    - docker-ce
+    - docker-compose
+#  notify: service docker start/enable
+
+#- name: "Create Docker Storage Daemon"
+#  copy:
+#    src: docker/docker-storage-setup
+#    dest: /etc/sysconfig/docker-storage-setup 
+
+    
+#- name:  Run Docker Storage Setup
+#  command: /usr/bin/docker-storage-setup
+#  ignore_errors: yes
+
+- name: Enable and restart docker in systemd
+  systemd:
+    name: docker
+    enabled: yes 
+    state: restarted

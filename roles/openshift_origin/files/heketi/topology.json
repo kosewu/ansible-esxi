@@ -1,0 +1,59 @@
+{
+  "clusters": [
+    {
+      "nodes": [
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "ocp-glusterfs1.gabby.local"
+              ],
+              "storage": [
+                "10.10.10.76"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+
+            "/dev/docker/gluster"
+          ]
+        },
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "ocp-glusterfs2.gabby.local"
+              ],
+              "storage": [
+                "10.10.10.77"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+
+            "/dev/docker/gluster"
+          ]
+        },
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "ocp-glusterfs3.gabby.local"
+              ],
+              "storage": [
+                "10.10.10.78"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+
+            "/dev/docker/gluster"
+          ]
+        }
+      ]
+    }
+  ]
+}

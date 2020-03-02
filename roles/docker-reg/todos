@@ -1,0 +1,18 @@
+cat /etc/docker/daemon.json
+{ "insecure-registries":["docker-registry.gabby.local:5000"]}
+
+
+export INSECURE_REGISTRY='--insecure-registry docker-registry.gabby.local:5000'
+
+Tagging iMages to push
+docker tag centos docker-registry.gabby.local:5000/centos
+
+
+
+Push to your private reg
+docker push docker-registry.gabby.local:5000/centos
+
+
+
+docker tag docker.io/keymetrics/pm2:latest-alpine docker-registry.gabby.local:5000/pm2:v01
+docker push docker-registry.gabby.local:5000/pm2:v01

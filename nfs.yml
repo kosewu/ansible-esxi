@@ -1,0 +1,33 @@
+---
+- hosts: nfs
+  pre_tasks:
+    - name: create nfsshare directory
+      file:
+        state: directory
+        path: /nfsshare
+        mode: 0755
+    - name: Create a new primary partition with a size of 200GiB
+      parted:
+        device: /dev/sdb
+        number: 1
+        state: present
+        part_end: 199GiB
+    - name: Create a ext2 filesystem on /dev/sdb1
+      filesystem:
+        fstype: xfs
+        dev: /dev/sdb1
+    - name: Mount and bind a volume
+      mount:
+        path: /nfsshare
+        src: /dev/sdb1
+        state: mounted
+        fstype: xfs
+  roles:
+    - nfs
+
+    
+#firewall-cmd --permanent --add-service=nfs
+#firewall-cmd --permanent --add-service=mountd
+#firewall-cmd --permanent --add-service=rpc-bind
+#firewall-cmd --reload
+

@@ -1,0 +1,13 @@
+---
+- hosts: all
+  roles:
+    - resolv
+    - selinux
+    - ntp
+    - common
+    - modules-extras
+    #- logstash
+
+    
+
+

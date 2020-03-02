@@ -1,0 +1,16 @@
+- name: partition /sdb
+  command: parted --script /dev/sdb mklabel gpt mkpart primary 1MiB 100%
+  args:
+    creates: /dev/sdb1
+    
+- name: create /data/docker
+  file:
+   path: /data/docker
+   state: directory
+
+- name: Ensure Volume Group vg_docker Exist
+  lvg:
+   vg: "vg_docker"
+   pvs: "/dev/sdb1"
+         
+    

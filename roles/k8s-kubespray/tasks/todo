@@ -1,0 +1,53 @@
+masters nodes
+firewall-cmd --permanent --add-port=6443/tcp
+firewall-cmd --permanent --add-port=2379/tcp
+firewall-cmd --permanent --add-port=2380/tcp
+firewall-cmd --permanent --add-port=10250/tcp
+firewall-cmd --permanent --add-port=10251/tcp
+firewall-cmd --permanent --add-port=10252/tcp
+firewall-cmd --permanent --add-port=10255/tcp
+firewall-cmd --reload
+
+all nodes
+firewall-cmd --permanent --add-port=30000-32767/tcp
+firewall-cmd --permanent --add-port=10250/tcp
+firewall-cmd --permanent --add-port=10255/tcp
+firewall-cmd --permanent --add-port=6783/tcp
+firewall-cmd --permanent --add-port=10250/tcp
+firewall-cmd --reload
+
+
+
+
+[all]
+
+k8s-master1.gabby.local ip=10.10.10.30 ansible_ssh_host=10.10.10.30 etcd_member_name=etcd1
+k8s-master2.gabby.local ip=10.10.10.31  ansible_ssh_host=10.10.10.31 etcd_member_name=etcd2
+k8s-node1.gabby.local ip=10.10.10.32 ansible_ssh_host=10.10.10.32
+k8s-node2.gabby.local ip=10.10.10.33  ansible_ssh_host=10.10.10.33
+k8s-node3.gabby.local ip=10.10.10.34  ansible_ssh_host=10.10.10.34
+k8s-router.gabby.local ip=10.10.10.40  ansible_ssh_host=10.10.10.40  etcd_member_name=etcd3
+
+
+# ## configure a bastion host if your nodes are not directly reachable
+# bastion ansible_host=x.x.x.x ansible_user=some_user
+
+[kube-master]
+k8s-master1.gabby.local ansible_ssh_host=10.10.10.30 ansible_user=root
+k8s-master2.gabby.local ansible_ssh_host=10.10.10.31 ansible_user=root
+
+
+[etcd]
+k8s-master1.gabby.local ansible_ssh_host=10.10.10.30 ansible_user=root
+k8s-master2.gabby.local ansible_ssh_host=10.10.10.31 ansible_user=root
+k8s-router.gabby.local ansible_ssh_host=10.10.10.40
+
+[kube-node]
+k8s-node1.gabby.local ansible_ssh_host=10.10.10.32
+k8s-node2.gabby.local ansible_ssh_host=10.10.10.33
+k8s-node3.gabby.local ansible_ssh_host=10.10.10.34
+k8s-router.gabby.local ansible_ssh_host=10.10.10.40
+
+[k8s-cluster:children]
+kube-master
+kube-node

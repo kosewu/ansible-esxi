@@ -1,0 +1,5 @@
+---
+command:
+  version:
+    exit-status: 1
+    exec: "/usr/local/bin/helm version"
