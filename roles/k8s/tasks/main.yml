@@ -85,7 +85,7 @@
 
   - name: reapply the role
     include_role:
-      name: rhel-system-roles.selinux
+      name: linux-system-roles.selinux
 
 
 - include_tasks: volume_docker_setup.yml
