@@ -1,5 +1,5 @@
 ---
 - include: all_servers.yml
-- include: k8s.yml
+#- include: k8s.yml
 - include: dns.yml
 #- include: server_roles/glusterfs.yml
