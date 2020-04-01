@@ -1,7 +1,7 @@
 ---
 - hosts: k8s
   roles:
-    #- docker
+    - docker
     #- k8s-kubespray
     - k8s
   vars:
