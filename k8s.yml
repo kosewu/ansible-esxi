@@ -3,6 +3,7 @@
   roles:
     #- docker
     - k8s-kubespray
+    - k8s
   vars:
    docker_storage_setup: False
    docker_storage_type: disk
